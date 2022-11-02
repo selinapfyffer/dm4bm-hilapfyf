@@ -10,7 +10,7 @@ The disadvantage is that, in the current implementation, application on large mo
 
 The notebooks can be run interactively on `MyBinder.org` by clicking on the button below:
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/cghiaus/dm4bem/HEAD)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/selinapfyffer/dm4bm-hilapfyf/HEAD)
 
 ## Tutorials
 - 01: [Weather data and solar radiation on a tilted surface](01WeatherData.ipynb).
