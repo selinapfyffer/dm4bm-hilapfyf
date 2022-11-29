@@ -2,6 +2,7 @@
 In order to master the energy transition in the future, traditional fossil fuels for heating buildings must be largely replaced. 
 The latest research from ETH Zurich shows that half of Switzerland's electricity imports in winter could be covered by seasonal thermal energy storage. Phase change materials (PCM) are very well suited for a energy storage system. Compared to a conventional water storage tank, a storage tank filled with PCM has a three times higher energy density.
 
+for more information: https://seasoncell.ch/ 
 ![zyklus](https://user-images.githubusercontent.com/90027713/204542465-0dc1ef17-8bbe-499c-9371-9ef3072c129b.PNG)
 > Figure: Integration of the thermal energy storage in a building. The tank is filled in summer with lowcost surplus energy. In winter the energy is discharged in a costefficient way with a smart controller.
 
