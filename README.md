@@ -10,9 +10,13 @@ The report will be written in *Jupyter* notebook, posted on *GitHub.com* and lik
 
 ## Structure of the report:
 [1.1] Introduction
+
 [1.2] Physical Model
+
 [1.3] Description of the thermal Circuit
+
 [1.4] System of algebraic-differential equations (DAE)
+
 [1.5] State-space representation
 [1.6] Steady-state
 [1.7] Dynamic simulation
