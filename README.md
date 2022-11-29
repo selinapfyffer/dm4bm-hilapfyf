@@ -2,10 +2,10 @@
 In order to master the energy transition in the future, traditional fossil fuels for heating buildings must be largely replaced. 
 The latest research from ETH Zurich shows that half of Switzerland's electricity imports in winter could be covered by seasonal thermal energy storage.
 
-![Unbenannt](https://user-images.githubusercontent.com/90027713/204542279-a66843c2-1f44-402e-87eb-56bf8e3bdffb.PNG)
+![zyklus](https://user-images.githubusercontent.com/90027713/204542465-0dc1ef17-8bbe-499c-9371-9ef3072c129b.PNG)
+> Figure: Integration of the thermal energy storage in a building. The tank is filled in summer with lowcost surplus energy. In winter the energy is discharged in a costefficient way with a smart controller.
 
 In this project, the charging behavior of a storage tank filled with phase change material is modeled dynamically.
-
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/selinapfyffer/dm4bm-hilapfyf/HEAD)
 
