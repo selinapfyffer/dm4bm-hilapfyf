@@ -2,7 +2,11 @@
 In order to master the energy transition in the future, traditional fossil fuels for heating buildings must be largely replaced. 
 The latest research from ETH Zurich shows that half of Switzerland's electricity imports in winter could be covered by seasonal thermal energy storage.
 
+![Unbenannt](https://user-images.githubusercontent.com/90027713/204542279-a66843c2-1f44-402e-87eb-56bf8e3bdffb.PNG)
+
 In this project, the charging behavior of a storage tank filled with phase change material is modeled dynamically.
+
+
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/selinapfyffer/dm4bm-hilapfyf/HEAD)
 
 # Written report
@@ -18,11 +22,18 @@ The report will be written in *Jupyter* notebook, posted on *GitHub.com* and lik
 [1.4] System of algebraic-differential equations (DAE)
 
 [1.5] State-space representation
+
+
 [1.6] Steady-state
+
 [1.7] Dynamic simulation
+
 [1.8] Teperature Curves in different nodes
+
 [1.9] Temperature curve with different Cell Sizes
+
 [1.10] Validation of the model with measurements
+
 [1.11] Future Simulations
 
 **Licence**
