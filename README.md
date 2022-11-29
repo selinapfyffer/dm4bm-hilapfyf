@@ -8,7 +8,7 @@ for more information: https://seasoncell.ch/
 
 In this project, the charging behavior of a storage tank filled with phase change material is modeled dynamically.
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/selinapfyffer/pcm_melting/HEAD)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/selinapfyffer/dm4bm-pcm_melting/HEAD)
 
 # Written report
 The report will be written in *Jupyter* notebook, posted on *GitHub.com* and liked to *MyBinder.org*.
