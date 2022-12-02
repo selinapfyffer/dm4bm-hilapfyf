@@ -17,7 +17,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import dm4bem
 
-L = 1
+L = 0.2
 B = 0.1
 
 i = 3
@@ -31,14 +31,15 @@ Spcm_updown = l*d           # m² surface of the pcm
 Spcm_leftright = bl*d
 
 Tmelt = 55
-n0 = 4
+n0 = np.array([0,1,2,3,4,5,6,7,8])
 # Physical properties
+
 # ===================
 
 Water = {'Density': 997,                      # kg/m³
        'Specific heat': 4186}               # J/(kg·K)
 # pd.DataFrame.from_dict(air, orient='index', columns=['air'])
-Water = pd.DataFrame(Water, index=['Air'])
+Water = pd.DataFrame(Water, index=['Water'])
 
 # PCM = {'Conductivity': [1.1, 1.1],
 #         'Density': [1280, 1280],
@@ -49,14 +50,14 @@ Water = pd.DataFrame(Water, index=['Air'])
 
 PCM = {'Conductivity': [1.1, 1.1, 1.1],  # W/(m·K)
         'Density': [1280, 1280, 1280],        # kg/m³
-        'Specific_heat': [3000, 2100, 265000],  # J/(kg·K)
+        'Specific_heat': [3000, 2100, 265000/4],  # J/(kg·K)
         'Width': [1, 1, 1],
         # 'Surface': [Spcm_b, Spcm_b, Spcm_b], # m²
         'Slices': [3, 3, 3]}                # number of  slices
 PCM_Data = pd.DataFrame(PCM, index=['Liquid', 'Solid', 'Phasechange'])
 
 
-h = 200  # W/(m²⋅K)
+h = 7750  # W/(m²⋅K)
 
 # Conduction
 #G_crl = PCM_Data.Conductivity['Solid'] / l * Spcm_l
@@ -64,8 +65,8 @@ G_cud = PCM_Data.Conductivity['Liquid'] / bl * Spcm_updown
 G_crl = float(PCM_Data.Conductivity['Liquid'] / l * Spcm_leftright)
 
 # Convection
-Gw = float(Water['Specific heat'])*2   #m*cp
-Gwpcm = h*Spcm_updown
+#Gw = float(Water['Specific heat'])*2   #m*cp
+Gw = h*Spcm_updown
 # Combindes Convection/Conduction
 G1 = Gw + G_cud*2
 G0 = Gw
@@ -94,7 +95,7 @@ A[3,3], A[4,4], A[5,5], A[6,4],  A[8,6], A[9,7], A[10,8], A[12,8], A[11,7], A[7,
 np.set_printoptions(suppress=False)
 A_Data = pd.DataFrame(A)
 
-G = np.array([Gw*2, Gw, Gw, G1, G1, G1, G_crl, G_crl, G_cud, G_cud, G_cud, G_crl, G_crl])
+G = np.array([Gw, Gw, Gw, G1, G1, G1, G_crl, G_crl, G_cud, G_cud, G_cud, G_crl, G_crl])
 #G = np.array([Gw*2, Gwpcm, Gwpcm, G1, G1, G1, G_crl, G_crl, G_cud, G_cud, G_cud, G_crl, G_crl])
 #G = np.array([Gw*2, Gw, Gw, G1, G1, G1, G_cud, G_cud,  G_cud,  G_cud, G_cud, G_cud, G_cud])
 G= np.diag(G)
@@ -127,8 +128,9 @@ b = np.zeros(13)
 b[[0]] = 1 
 print(b)   # branches
 f = np.zeros(9)         # nodes
-y = np.zeros(9)         # nodes
-y[[n0]] = 1              # nodes (temperatures) of interest
+y = np.zeros(9)
+for i in range(0, len(n0)):         # nodes
+    y[[n0]] = 1              # nodes (temperatures) of interest
 
 [As_solid, Bs_solid, Cs_solid, Ds_solid] = dm4bem.tc2ss(A, G, b, C_solid, f, y)
 print('As = \n', As_solid, '\n')
@@ -153,7 +155,7 @@ print(f'θ = {θ} °C')
 
 bT = np.array([85])     # [To, To, To, Tisp]
 fQ = np.array([0])         # [Φo, Φi, Qa, Φa]
-u = np.hstack([fQ])
+u = np.hstack([bT])
 print(f'u = {u}')
 
 yss = (-Cs_solid @ np.linalg.inv(As_solid) @ Bs_solid + Ds_solid) @ u
@@ -165,7 +167,7 @@ print('2 x Time constants: \n', -2 / λ, 's \n')
 dtmax = min(-2. / λ)
 print(f'Maximum time step: {dtmax:.2f} s = {dtmax / 60:.2f} min')
 
-dt = 3     # seconds
+dt = 12    # seconds
 print(f'dt = {dt} s = {dt / 60:.0f} min')
 
 t_resp = 4 * max(-1 / λ)
@@ -173,7 +175,7 @@ print('Time constants: \n', -1 / λ, 's \n')
 print(f'Settling time: {t_resp:.0f} s = {t_resp / 60:.1f} min \
 = {t_resp / (3600):.2f} h = {t_resp / (3600 * 24):.2f} days')
 
-duration = 6000          # seconds, larger than response time
+duration = 126000        # seconds, larger than response time
 n = int(np.floor(duration / dt))    # number of time steps
 t = np.arange(0, n * dt, dt)        # time vector for n time steps
 
@@ -181,7 +183,7 @@ print(f'Duration = {duration} s')
 print(f'Number of time steps = {n}')
 pd.DataFrame(t, columns=['time'])
 
-u = 80*np.ones([1, n])      # Tisp = 20 for n time steps
+u = 85*np.ones([1, n])      # Tisp = 20 for n time steps
 print('u = ')
 pd.DataFrame(u)
 
@@ -190,23 +192,24 @@ n_s = As_solid.shape[0]                      # number of state variables
 θ_imp = 20*np.ones([n_s, t.shape[0]])    # implicit Euler in time t
 
 I = np.eye(n_s)                        # identity matrix
-
-for k in range(n - 1):
-    if θ_exp[n0-3, k] < Tmelt-1:
-        θ_exp[:, k + 1] = (I + dt * As_solid) @\
-            θ_exp[:, k] + dt * Bs_solid @ u[:, k]
-        θ_imp[:, k + 1] = np.linalg.inv(I - dt * As_solid) @\
-            (θ_imp[:, k] + dt * Bs_solid @ u[:, k])
-    if θ_exp[n0-3, k] > Tmelt+1:
-        θ_exp[:, k + 1] = (I + dt * As_liquid) @\
-            θ_exp[:, k] + dt * Bs_liquid @ u[:, k]
-        θ_imp[:, k + 1] = np.linalg.inv(I - dt * As_liquid) @\
-            (θ_imp[:, k] + dt * Bs_liquid @ u[:, k])
-    else: 
-        θ_exp[:, k + 1] = (I + dt * As_pc) @\
-            θ_exp[:, k] + dt * Bs_pc @ u[:, k]
-        θ_imp[:, k + 1] = np.linalg.inv(I - dt * As_pc) @\
-            (θ_imp[:, k] + dt * Bs_pc @ u[:, k])
+for i in range(0, len(n0)):
+    p = n0[i]
+    for k in range(n - 1):
+        if θ_exp[p-3, k] < Tmelt-4:
+            θ_exp[:, k + 1] = (I + dt * As_solid) @\
+                θ_exp[:, k] + dt * Bs_solid @ u[:, k]
+            θ_imp[:, k + 1] = np.linalg.inv(I - dt * As_solid) @\
+                (θ_imp[:, k] + dt * Bs_solid @ u[:, k])
+        if θ_exp[p-3, k] > Tmelt+4:
+            θ_exp[:, k + 1] = (I + dt * As_liquid) @\
+                θ_exp[:, k] + dt * Bs_liquid @ u[:, k]
+            θ_imp[:, k + 1] = np.linalg.inv(I - dt * As_liquid) @\
+                (θ_imp[:, k] + dt * Bs_liquid @ u[:, k])
+        else: 
+            θ_exp[:, k + 1] = (I + dt * As_pc) @\
+                θ_exp[:, k] + dt * Bs_pc @ u[:, k]
+            θ_imp[:, k + 1] = np.linalg.inv(I - dt * As_pc) @\
+                (θ_imp[:, k] + dt * Bs_pc @ u[:, k])
         
 y_exp = Cs_solid @ θ_exp + Ds_solid @  u
 y_imp = Cs_solid @ θ_imp + Ds_solid @  u
@@ -216,8 +219,12 @@ ax.plot(t / 3600, y_exp.T, t / 3600, y_imp.T)
 ax.set(xlabel='Time [h]',
        ylabel='$T_i$ [°C]',
        title='Step input: To')
-ax.legend(['Implicit', 'Explicit'])
+ax.legend(['0', '1', '2', '3', '4', '5', '6', '7', '8'])
 plt.show()
 
-
-
+################### Charging Power ##################################################
+#z = y_exp[0, :]-y_exp[3,:]*G1
+Q = (y_exp[3, :]-y_exp[6, :]+y_exp[4, :]-y_exp[7, :]+y_exp[5, :]-y_exp[8, :])*G1
+#Q = (85-y_exp[0, :])*G1
+fig, ax = plt.subplots()
+ax.plot(Q)
