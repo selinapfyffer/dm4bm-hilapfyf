@@ -16,6 +16,20 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import dm4bem
+from PIDsim import PID # PID controller implementation
+
+T1 = 85
+
+# PID controller parameters
+SP = 75 # set point
+PV = T1 # measured process variable
+MV = 0 # manipulated variable, valve 0...1, 0 -> only input 1, 1 -> only input 2
+
+# PID controller setup
+PID_controller = PID(Kp = 0.005, Ki = 0, Kd=0, MVrange=(0.0,1.0), DirectAction = True)
+
+# disturbance
+T_dist = 0
 
 L = 0.2
 B = 0.1
@@ -144,7 +158,7 @@ print('Ds = \n', Ds_solid, '\n')
 
 # steady state
 b = np.zeros(13)        # temperature sources
-b[[0]] = 85      # outdoor temperature
+b[[0]] = T1      # outdoor temperature
 
 f = np.zeros(9)         # flow-rate sources
 
@@ -153,7 +167,7 @@ print(f'θ = {θ} °C')
 
 # State-space representation
 
-bT = np.array([85])     # [To, To, To, Tisp]
+bT = np.array([T1])     # [To, To, To, Tisp]
 fQ = np.array([0])         # [Φo, Φi, Qa, Φa]
 u = np.hstack([bT])
 print(f'u = {u}')
@@ -183,13 +197,23 @@ print(f'Duration = {duration} s')
 print(f'Number of time steps = {n}')
 pd.DataFrame(t, columns=['time'])
 
-u = 85*np.ones([1, n])      # Tisp = 20 for n time steps
-print('u = ')
-pd.DataFrame(u)
+# initialize input temperature
+T_mix = T1
+u = np.zeros([1, n])      # Tisp = 20 for n time steps
+u[:, 0] = T_mix
 
 n_s = As_solid.shape[0]                      # number of state variables
 θ_exp = 20*np.ones([n_s, t.shape[0]])    # explicit Euler in time t
 θ_imp = 20*np.ones([n_s, t.shape[0]])    # implicit Euler in time t
+
+# initialize output matrices
+y_exp = np.zeros([len(n0), t.shape[0]])
+y_imp = np.zeros([len(n0), t.shape[0]])
+y_exp[:, 0] = Cs_solid @ θ_exp[:, 0] + Ds_solid @  u[:, 0]
+y_imp[:, 0] = Cs_solid @ θ_imp[:, 0] + Ds_solid @  u[:, 0]
+
+# initialize PID controller
+MV = PID_controller.update(t[0], SP, PV, MV)
 
 I = np.eye(n_s)                        # identity matrix
 for i in range(0, len(n0)):
@@ -211,8 +235,28 @@ for i in range(0, len(n0)):
             θ_imp[:, k + 1] = np.linalg.inv(I - dt * As_pc) @\
                 (θ_imp[:, k] + dt * Bs_pc @ u[:, k])
         
-y_exp = Cs_solid @ θ_exp + Ds_solid @  u
-y_imp = Cs_solid @ θ_imp + Ds_solid @  u
+        y_exp[:, k + 1] = Cs_solid @ θ_exp[:, k + 1] + Ds_solid @  u[:, k]
+        y_imp[:, k + 1] = Cs_solid @ θ_imp[:, k + 1] + Ds_solid @  u[:, k]
+        
+        # extract T2_a
+        T2_a = y_exp[2, k + 1]
+        
+        # compute T2_b
+        T2_b = T2_a - T_dist;
+        
+        # compute mix temperature (valve)
+        T_mix = (1 - MV) * T1 + MV * T2_b
+        u[:, k + 1] = T_mix
+        PV = T_mix
+        
+        # update PID controller
+        MV = PID_controller.update(t[k + 1], SP, PV, MV)
+
+#y_exp_2 = Cs_solid @ θ_exp + Ds_solid @  u
+#y_imp_2 = Cs_solid @ θ_imp + Ds_solid @  u
+
+# PID controller plots
+PID_controller.plot()
 
 fig, ax = plt.subplots()
 ax.plot(t / 3600, y_exp.T, t / 3600, y_imp.T)
@@ -225,6 +269,6 @@ plt.show()
 ################### Charging Power ##################################################
 #z = y_exp[0, :]-y_exp[3,:]*G1
 Q = (y_exp[3, :]-y_exp[6, :]+y_exp[4, :]-y_exp[7, :]+y_exp[5, :]-y_exp[8, :])*G1
-#Q = (85-y_exp[0, :])*G1
+#Q = (T1-y_exp[0, :])*G1
 fig, ax = plt.subplots()
 ax.plot(Q)
