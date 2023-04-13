@@ -26,10 +26,10 @@ PV = T1 # measured process variable
 MV = 0 # manipulated variable, valve 0...1, 0 -> only input 1, 1 -> only input 2
 
 # PID controller setup
-PID_controller = PID(Kp = 0.005, Ki = 0, Kd=0, MVrange=(0.0,1.0), DirectAction = True)
+PID_controller = PID(Kp = 0.01, Ki = 0.0001, Kd=0, MVrange=(0.0,1.0), DirectAction = True)
 
 # disturbance
-T_dist = 0
+T_dist = 50
 
 L = 0.2
 B = 0.1
@@ -241,7 +241,8 @@ for k in range(n - 1):
     T2_a = y_exp[2, k + 1]
     
     # compute T2_b
-    T2_b = T2_a - T_dist
+    #T2_b = T2_a - T_dist
+    T2_b = 40
     
     # compute mix temperature (valve)
     T_mix = (1 - MV) * T1 + MV * T2_b
