@@ -216,41 +216,40 @@ y_imp[:, 0] = Cs_solid @ θ_imp[:, 0] + Ds_solid @  u[:, 0]
 MV = PID_controller.update(t[0], SP, PV, MV)
 
 I = np.eye(n_s)                        # identity matrix
-for i in range(0, len(n0)):
-    p = n0[i]
-    for k in range(n - 1):
-        if θ_exp[p-3, k] < Tmelt-4:
-            θ_exp[:, k + 1] = (I + dt * As_solid) @\
-                θ_exp[:, k] + dt * Bs_solid @ u[:, k]
-            θ_imp[:, k + 1] = np.linalg.inv(I - dt * As_solid) @\
-                (θ_imp[:, k] + dt * Bs_solid @ u[:, k])
-        if θ_exp[p-3, k] > Tmelt+4:
-            θ_exp[:, k + 1] = (I + dt * As_liquid) @\
-                θ_exp[:, k] + dt * Bs_liquid @ u[:, k]
-            θ_imp[:, k + 1] = np.linalg.inv(I - dt * As_liquid) @\
-                (θ_imp[:, k] + dt * Bs_liquid @ u[:, k])
-        else: 
-            θ_exp[:, k + 1] = (I + dt * As_pc) @\
-                θ_exp[:, k] + dt * Bs_pc @ u[:, k]
-            θ_imp[:, k + 1] = np.linalg.inv(I - dt * As_pc) @\
-                (θ_imp[:, k] + dt * Bs_pc @ u[:, k])
-        
-        y_exp[:, k + 1] = Cs_solid @ θ_exp[:, k + 1] + Ds_solid @  u[:, k]
-        y_imp[:, k + 1] = Cs_solid @ θ_imp[:, k + 1] + Ds_solid @  u[:, k]
-        
-        # extract T2_a
-        T2_a = y_exp[2, k + 1]
-        
-        # compute T2_b
-        T2_b = T2_a - T_dist;
-        
-        # compute mix temperature (valve)
-        T_mix = (1 - MV) * T1 + MV * T2_b
-        u[:, k + 1] = T_mix
-        PV = T_mix
-        
-        # update PID controller
-        MV = PID_controller.update(t[k + 1], SP, PV, MV)
+p = 8 # last PCM node
+for k in range(n - 1):
+    if θ_exp[p-3, k] < Tmelt-4:
+        θ_exp[:, k + 1] = (I + dt * As_solid) @\
+            θ_exp[:, k] + dt * Bs_solid @ u[:, k]
+        θ_imp[:, k + 1] = np.linalg.inv(I - dt * As_solid) @\
+            (θ_imp[:, k] + dt * Bs_solid @ u[:, k])
+    if θ_exp[p-3, k] > Tmelt+4:
+        θ_exp[:, k + 1] = (I + dt * As_liquid) @\
+            θ_exp[:, k] + dt * Bs_liquid @ u[:, k]
+        θ_imp[:, k + 1] = np.linalg.inv(I - dt * As_liquid) @\
+            (θ_imp[:, k] + dt * Bs_liquid @ u[:, k])
+    else: 
+        θ_exp[:, k + 1] = (I + dt * As_pc) @\
+            θ_exp[:, k] + dt * Bs_pc @ u[:, k]
+        θ_imp[:, k + 1] = np.linalg.inv(I - dt * As_pc) @\
+            (θ_imp[:, k] + dt * Bs_pc @ u[:, k])
+    
+    y_exp[:, k + 1] = Cs_solid @ θ_exp[:, k + 1] + Ds_solid @  u[:, k]
+    y_imp[:, k + 1] = Cs_solid @ θ_imp[:, k + 1] + Ds_solid @  u[:, k]
+    
+    # extract T2_a
+    T2_a = y_exp[2, k + 1]
+    
+    # compute T2_b
+    T2_b = T2_a - T_dist
+    
+    # compute mix temperature (valve)
+    T_mix = (1 - MV) * T1 + MV * T2_b
+    u[:, k + 1] = T_mix
+    PV = T_mix
+    
+    # update PID controller
+    MV = PID_controller.update(t[k + 1], SP, PV, MV)
 
 #y_exp_2 = Cs_solid @ θ_exp + Ds_solid @  u
 #y_imp_2 = Cs_solid @ θ_imp + Ds_solid @  u
