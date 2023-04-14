@@ -29,17 +29,17 @@ for i in range(int(len(T_dist))):
    T_dist[i] = math.sin(i / 100)
 
 # # Parameterstudy KP  
-# for i in range(0, 5, 1):
-#     Kp_x = i/100
-#     Ki_x = 0.0001
-#     Kd_x = 0
+for i in range(0, 5, 1):
+    Kp_x = 1
+    Ki_x = 0.0001
+    Kd_x = 0
 
     
 # Parameterstudy KI  
-for i in range(0, 5, 1):
-    Ki_x = i/1000
-    Kp_x = 0.01
-    Kd_x = 0
+# for i in range(0, 5, 1):
+#     Ki_x = i/1000
+#     Kp_x = 0.01
+#     Kd_x = 0
     
     # PID controller setup
     PID_controller = PID(Kp = Kp_x, Ki = Ki_x, Kd = Kd_x, MVrange=(0.0,1.0), DirectAction = True)
