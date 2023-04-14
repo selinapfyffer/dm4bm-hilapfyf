@@ -26,7 +26,10 @@ PV = T1 # measured process variable
 MV = 0 # manipulated variable, valve 0...1, 0 -> only input 1, 1 -> only input 2
 
 # PID controller setup
-PID_controller = PID(Kp = 0.01, Ki = 0.0001, Kd=0, MVrange=(0.0,1.0), DirectAction = True)
+PID_controller = PID(Kp = 0.005, Ki = 0.00000, Kd=0, MVrange=(0.0,1.0), DirectAction = True)
+
+# Ki too big -> oscillation
+#PID_controller = PID(Kp = 0.01, Ki = 0.002, Kd=0, MVrange=(0.0,1.0), DirectAction = True)
 
 # disturbance
 T_dist = 50
