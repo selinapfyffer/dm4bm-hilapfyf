@@ -2,7 +2,7 @@
 """
 Created on Thu Nov  3 13:55:43 2022
 
-@author: selin
+@author: selin & Gubn
 """
 
 # -*- coding: utf-8 -*-
