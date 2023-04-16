@@ -34,7 +34,7 @@ PID_controller = PID(Kp = 0.005, Ki = 0.00000, Kd=0, MVrange=(0.0,1.0), DirectAc
 # disturbance
 T_dist = 50
 
-L = 0.2
+L = 0.1
 B = 0.1
 
 i = 3
@@ -268,10 +268,17 @@ ax.set(xlabel='Time [h]',
        title='Step input: To')
 ax.legend(['0', '1', '2', '3', '4', '5', '6', '7', '8'])
 plt.show()
+plt.grid()
 
 ################### Charging Power ##################################################
 #z = y_exp[0, :]-y_exp[3,:]*G1
-Q = (y_exp[3, :]-y_exp[6, :]+y_exp[4, :]-y_exp[7, :]+y_exp[5, :]-y_exp[8, :])*G1
+#Q = (y_exp[3, :]-y_exp[6, :]+y_exp[4, :]-y_exp[7, :]+y_exp[5, :]-y_exp[8, :])*G_cud/1000
+Q = (y_exp[0, :]-y_exp[3, :]+y_exp[1, :]-y_exp[4, :]+y_exp[2, :]-y_exp[5, :])*G1/1000
+#Q = (y_exp[0, :]-y_exp[1, :] + y_exp[1, :]-y_exp[2, :])*Gw/1000
+#Q = (y_exp[0, :]-y_exp[1, :])*G0
 #Q = (T1-y_exp[0, :])*G1
 fig, ax = plt.subplots()
-ax.plot(Q)
+ax.plot(t / 3600, Q)
+plt.grid()
+
+I = np.trapz(Q, t)
