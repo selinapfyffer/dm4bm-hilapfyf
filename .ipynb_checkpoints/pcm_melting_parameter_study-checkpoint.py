@@ -15,18 +15,18 @@ import math
 T1 = 85
 
 # PID controller parameters
-SP = 75 # set point
+SP = 85 # set point
 PV = T1 # measured process variable
 MV = 0 # manipulated variable, valve 0...1, 0 -> only input 1, 1 -> only input 2
 
 # disturbance
 T_dist = np.zeros([10500]) 
 
-for i in range(int(len(T_dist)/2000)):
-    T_dist[i*2000] = random.randint(40, 75)
+#for i in range(int(len(T_dist)/2000)):
+   #T_dist[i*2000] = random.randint(40, 75)
    
 # for i in range(int(len(T_dist))):
-#     T_dist[i] = math.sin(i / 100)
+#    T_dist[i] = math.sin(i / 100)
 
 # # Parameterstudy KP  
 for i in range(0, 1, 1):
@@ -58,7 +58,7 @@ for i in range(0, 1, 1):
     Spcm_leftright = bl*d
     
     Tmelt = 55
-    n0 = np.array([0,1,2,3,4,5,6,7,8])
+    n0 = np.array([2])
     # Physical properties
     
     # ===================
@@ -281,15 +281,6 @@ for i in range(0, 1, 1):
            ylabel='$T_i$ [°C]',
            title='Step input: To with Kp = ' + str(Kp_x))
     ax.legend(['0', '1', '2', '3', '4', '5', '6', '7', '8'])
-    plt.grid()
-    plt.show()
-    
-    fig, ax = plt.subplots()
-    ax.plot(t / 3600, T_dist)
-    ax.set(xlabel='Time [h]',
-           ylabel='$T_{dist}$ [°C]',
-           title='Step input')
-    ax.legend(['Disturbance'])
     plt.grid()
     plt.show()
     
