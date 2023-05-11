@@ -8,7 +8,7 @@ In this project, the charging behavior of a storage tank filled with phase chang
 > Figure: Integration of the thermal energy storage in a building. The tank is filled in summer with lowcost surplus energy. In winter the energy is discharged in a costefficient way with a smart controller.
 
 
-[![Binder](https://mybinder.org/badge_logo.svg)]([https://mybinder.org/v2/gh/selinapfyffer/dm4bm-pcm_melting/HEAD])
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/selinapfyffer/dm4bm-pcm_melting/tree/main/HEAD)
 
 ## Abstract
 This report examines the performance of a PID (Proportional-Integral-Derivative) controller and the melting process of a PCM (Phase Change Material) cell. The evaluation begins with an analysis of the PID controller's response in various scenarios, revealing suboptimal parameter settings leading to a persistent offset between the controlled signal and the setpoint. The K_p parameter contributes to this offset, while the K_i parameter results in frequent valve switching.
